@@ -7,7 +7,7 @@ class Cluster(object):
 
     cluster_neurons = []
 
-    def __init__(self, in_n=1, out_n=1, cluster=5):
+    def __init__(self, in_n, out_n, cluster):
         #make all our input, output and cluster neurons
         for n in range(0, in_n):
             self.input_neurons.append(Neuron())
@@ -27,4 +27,5 @@ class Cluster(object):
         #make a connection to each to_neuron from each from_neuron
         for from_neuron in from_neurons:
             for to_neuron in to_neurons:
-                from_neuron.connect(to_neuron)
+                if from_neuron != to_neuron:
+                    from_neuron.connect(to_neuron)

@@ -32,7 +32,10 @@ class Neuron(object):
     threshold = 1.0
     current_input = 0
 
-    outputs = []
+    outputs = None
+
+    def __init__(self):
+        self.outputs = []
 
     def process_signal(self, sender=None, signal=None):
         if sender is None or signal is None:
