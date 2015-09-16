@@ -1,12 +1,9 @@
 import random
+import math
 
 
 class Connection(object):
-    weight = 1.0
-    input_neuron = None
-    output_neuron = None
-
-    def __init__(self, input_neuron, output_neuron, new_weight=None):
+    def __init__(self, input_neuron, output_neuron, new_weight):
         if new_weight:
             self.weight = new_weight
         else:
@@ -29,13 +26,13 @@ class Connection(object):
 
 
 class Neuron(object):
-    threshold = 1.0
-    current_input = 0
-
-    outputs = None
-
     def __init__(self):
         self.outputs = []
+        self.threshold = 1.0
+        self.current_input = 0
+        self.error = 0
+        self.timestep = 0
+        self.error_count = 0
 
     def process_signal(self, sender=None, signal=None):
         if sender is None or signal is None:
@@ -48,6 +45,7 @@ class Neuron(object):
 
             #maybe say somethin back to whoever just sent us the message.
             sender.output_neuron_did_transmit()
+            self.timestep = self.timestep + 1
             self.current_input = 0
 
     def connect(self, neuron):
@@ -55,11 +53,16 @@ class Neuron(object):
         self.outputs.append(connection)
         return connection
 
+    def sigmoid(self, x):
+        if x < -100:
+            return 0.0
+        if x > 100:
+            return 1.0
+        return 1/(1 + math.exp(-x))
+
     """
     first get the error (target - actual output) for the output vs target.
     output from a nueron * error rate * learning rate
-
-    record that a neuron fired.
 
     add in timestep information.
     """
