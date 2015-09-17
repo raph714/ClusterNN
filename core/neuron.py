@@ -3,7 +3,7 @@ import math
 
 
 class Connection(object):
-    def __init__(self, input_neuron, output_neuron, new_weight):
+    def __init__(self, input_neuron, output_neuron, new_weight=None):
         if new_weight:
             self.weight = new_weight
         else:
@@ -27,9 +27,14 @@ class Connection(object):
 
 class Neuron(object):
     def __init__(self):
+        #change these to sets
         self.outputs = []
+        self.inputs = []
         self.threshold = 1.0
+
         self.current_input = 0
+        self.input_count = 0
+
         self.error = 0
         self.timestep = 0
         self.error_count = 0
@@ -39,18 +44,25 @@ class Neuron(object):
             return
 
         self.current_input = self.current_input + signal
+        self.input_count = self.input_count + 1
 
-        if self.current_input > self.threshold:
-            [x.transmit(signal=self.current_input) for x in self.outputs]
+        if self.input_count == len(self.inputs):
+            [x.transmit(signal=self.sigmoid(self.current_input)) for x in self.outputs]
 
-            #maybe say somethin back to whoever just sent us the message.
-            sender.output_neuron_did_transmit()
-            self.timestep = self.timestep + 1
-            self.current_input = 0
+        return
+
+        # if self.current_input > self.threshold:
+        #     [x.transmit(signal=self.current_input) for x in self.outputs]
+
+        #     #maybe say somethin back to whoever just sent us the message.
+        #     sender.output_neuron_did_transmit()
+        #     self.timestep = self.timestep + 1
+        #     self.current_input = 0
 
     def connect(self, neuron):
         connection = Connection(self, neuron)
         self.outputs.append(connection)
+        neuron.inputs.append(connection)
         return connection
 
     def sigmoid(self, x):
