@@ -16,7 +16,7 @@ class Connection(object):
             return
 
         output_signal = self.weight * signal
-        self.output_neuron.process_signal(sender=self, signal=output_signal)
+        self.output_neuron.process_signal(sender=self.input_neuron, signal=output_signal)
 
     def output_neuron_did_transmit(self):
         """
@@ -26,7 +26,9 @@ class Connection(object):
 
 
 class Neuron(object):
-    def __init__(self):
+    def __init__(self, controller):
+        self.controller = controller
+
         #change these to sets
         self.outputs = []
         self.inputs = []
@@ -40,16 +42,22 @@ class Neuron(object):
         self.error_count = 0
 
     def process_signal(self, sender=None, signal=None):
-        if sender is None or signal is None:
+        if signal is None:
             return
 
         self.current_input = self.current_input + signal
         self.input_count = self.input_count + 1
 
-        if self.input_count == len(self.inputs):
+        if self.input_count >= len(self.inputs):
             [x.transmit(signal=self.sigmoid(self.current_input)) for x in self.outputs]
+            self.input_count = 0
+            self.current_input = 0
 
         return
+
+        #Explore the idea that a neuron can just fire whenever it's ready to fire, disregarding
+        #the number of inputs it has received. Of course we would need a way of garunteeing
+        #concurrency.
 
         # if self.current_input > self.threshold:
         #     [x.transmit(signal=self.current_input) for x in self.outputs]
