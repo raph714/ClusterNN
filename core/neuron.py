@@ -13,9 +13,9 @@ class Connection(object):
 
     def transmit(self, signal=None):
         if signal is None:
-            return
-
-        output_signal = self.weight * signal
+            output_signal = 0
+        else:
+            output_signal = self.weight * signal
         self.output_neuron.process_signal(sender=self.input_neuron, signal=output_signal)
 
     def output_neuron_did_transmit(self):
@@ -23,6 +23,13 @@ class Connection(object):
         An opportunity to do something in response to the output neuron triggering
         """
         pass
+
+    def learn(self, signal=None):
+        if signal is None:
+            output_signal = 0
+        else:
+            output_signal = self.weight / signal
+        self.input_neuron.learn(sender=self.output_neuron, signal=output_signal)
 
 
 class Neuron(object):
@@ -43,7 +50,7 @@ class Neuron(object):
 
     def process_signal(self, sender=None, signal=None):
         if signal is None:
-            return
+            signal = 0
 
         self.current_input = self.current_input + signal
         self.input_count = self.input_count + 1
@@ -66,6 +73,10 @@ class Neuron(object):
         #     sender.output_neuron_did_transmit()
         #     self.timestep = self.timestep + 1
         #     self.current_input = 0
+
+    def learn(self, sender=None, signal=None):
+        if signal is None:
+            signal = 0
 
     def connect(self, neuron):
         connection = Connection(self, neuron)
