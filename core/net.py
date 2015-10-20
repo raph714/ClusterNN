@@ -54,6 +54,8 @@ class FeedForward(object):
 
         #Set our answers
         self.answers = a
+        #reset the result
+        self.result = {}
 
         #proecess our inputs
         for x in range(len(i)):
@@ -66,8 +68,12 @@ class FeedForward(object):
         self.result[sender] = signal
 
         if len(self.result) == len(self.answers):
+            print 'Guesses for answers', self.answers
             for x in range(len(self.output_neurons)):
                 neuron = self.output_neurons[x]
                 answer = self.answers[x]
+                error = answer - self.result[neuron]
 
-                print 'Answer was: %s, correct answer was: %s, error was: %s' % (self.result[neuron], answer, answer - self.result[neuron])
+                print 'Answer was: %s, correct answer was: %s, error was: %s' % (self.result[neuron], answer, error)
+
+                neuron.learn(error)

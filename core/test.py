@@ -8,6 +8,10 @@ def test_ff():
     inputs = [[1, 2], [0, 1], [3, 4], [2, 2]]
     answers = [[0, 1, 1], [0, 0, 1, ], [1, 1, 1, ], [1, 0, 0, ]]
 
+    print 'input', f.input_neurons
+    print 'output', f.output_neurons
+    print 'hidden', f.hidden_neurons
+
     #do this a couple times so we can make sure the outputs match for the same set of data.
     for i in range(len(inputs)):
         f.process_input(inputs[i], answers[i])
