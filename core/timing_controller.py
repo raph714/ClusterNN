@@ -26,5 +26,13 @@ class TimingController(object):
         if self.processing:
             self.cycle()
 
+    def start(self):
+        self.processing = True
+        self.cycle()
+
     def stop(self):
+        for n in self.neurons:
+            n.reset()
+        for c in self.connections:
+            c.reset()
         self.processing = False

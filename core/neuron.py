@@ -1,5 +1,5 @@
 import random
-import math
+from scipy.special import expit as sigmoid
 
 
 class Connection(object):
@@ -16,12 +16,14 @@ class Connection(object):
         if signal is None:
             signal = 0
         self.signal = signal
+        # print "CON receive %s" % self.signal
 
     def fire_signal(self):
         if self.signal > 0:
+            # print "CON send %s" % self.signal
             output_signal = self.weight * self.signal
             self.output_neuron.receive_signal(sender=self.input_neuron, signal=output_signal)
-        self.signal = 0
+            self.signal = 0
 
     def output_neuron_did_transmit(self):
         """
@@ -35,6 +37,9 @@ class Connection(object):
         else:
             output_signal = self.weight / signal
         self.input_neuron.learn(sender=self.output_neuron, signal=output_signal)
+
+    def reset(self):
+        self.signal = 0
 
 
 class Neuron(object):
@@ -58,11 +63,14 @@ class Neuron(object):
         if signal is None:
             signal = 0
 
+        # print "NEURON receive %s" % signal
         self.current_input = self.current_input + signal
+        # print "NEURON current Input %s" % self.current_input
 
     def fire_signal(self):
-        if self.current_input >= self.threshold:
-            [x.receive_signal(signal=self.sigmoid(self.current_input)) for x in self.outputs]
+        if self.current_input > self.threshold:
+            # print "NEURON send %s" % sigmoid(self.current_input)
+            [x.receive_signal(signal=sigmoid(self.current_input)) for x in self.outputs]
             self.current_input = 0
             self.times_fired += 1
 
@@ -76,12 +84,9 @@ class Neuron(object):
         neuron.inputs.append(connection)
         return connection
 
-    def sigmoid(self, x):
-        if x < -100:
-            return 0.0
-        if x > 100:
-            return 1.0
-        return 1/(1 + math.exp(-x))
+    def reset(self):
+        self.current_input = 0
+        self.times_fired = 0
 
     """
     first get the error (target - actual output) for the output vs target.

@@ -62,18 +62,18 @@ class FeedForward(object):
         if len(a) != len(self.output_neurons):
             raise IndexError("Answer does not have the same number of items as the net has output neurons.")
 
+        # print "INPUTS %s, ANSWERS %s" % (i, a)
         #Set our answers
         self.answers = a
-        #reset the result
-        self.result = {}
 
         #proecess our inputs
         for x in range(len(i)):
             value = i[x]
+            # print "VALUE %s" % value
             neuron = self.input_neurons[x]
-            neuron.receive_signal(signal=value)
+            neuron.receive_signal(signal=value, sender=self)
 
-        self.timing_controller.cycle()
+        self.timing_controller.start()
 
     def receive_signal(self, sender=None, signal=None):
         #on output, the output neuron should call this with the result.
@@ -90,5 +90,7 @@ class FeedForward(object):
 
                 neuron.learn(error)
 
-                #we're done, break the while loop in process_input
-                self.timing_controller.stop()
+            #we're done, break the while loop in process_input
+            self.timing_controller.stop()
+
+            self.result = {}
