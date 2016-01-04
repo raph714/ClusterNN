@@ -9,18 +9,13 @@ def test_ff():
     answers = [[0, 1, 1], [0, 1, 1]]
 
     #do this a couple times so we can make sure the outputs match for the same set of data.
-    for i in range(len(inputs)):
-        f.process_input(inputs[i], answers[i])
+    x = 0
+    while x < 100:
+        x += 1
+        for i in range(len(inputs)):
+            f.process_input(inputs[i], answers[i])
 
-    print '\n\n'
-
-    for i in range(len(inputs)):
-        f.process_input(inputs[i], answers[i])
-
-    print '\n\n'
-
-    for i in range(len(inputs)):
-        f.process_input(inputs[i], answers[i])
+        print '\n\n'
 
 
 if __name__ == '__main__':

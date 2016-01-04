@@ -62,14 +62,12 @@ class FeedForward(object):
         if len(a) != len(self.output_neurons):
             raise IndexError("Answer does not have the same number of items as the net has output neurons.")
 
-        # print "INPUTS %s, ANSWERS %s" % (i, a)
         #Set our answers
         self.answers = a
 
         #proecess our inputs
         for x in range(len(i)):
             value = i[x]
-            # print "VALUE %s" % value
             neuron = self.input_neurons[x]
             neuron.receive_signal(signal=value, sender=self)
 
@@ -84,11 +82,25 @@ class FeedForward(object):
             for x in range(len(self.output_neurons)):
                 neuron = self.output_neurons[x]
                 answer = self.answers[x]
-                error = answer - self.result[neuron]
 
-                print 'Answer was: %s, correct answer was: %s, error was: %s' % (self.result[neuron], answer, error)
+                #let's get a percentage of error.
+                #if it's positive, we're under, if it ended up negative, we were over.
+                correction = 1
 
-                neuron.learn(error)
+                if answer == 0:
+                    error_percent = self.result[neuron]
+                else:
+                    error_percent = (answer/self.result[neuron])
+
+                if answer <= self.result[neuron]:
+                    correction = 1 - (error_percent/10)
+                else:
+                    correction = 1 + (error_percent/10)
+
+                print 'Answer was: %s, correct answer was: %s, error was: %s' % (self.result[neuron], answer, error_percent)
+
+                print correction
+                neuron.learn(correction)
 
             #we're done, break the while loop in process_input
             self.timing_controller.stop()
